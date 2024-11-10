@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Photo Frame Cropping</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+  <style>
+    /* Basic Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body Styling with Gradient Background */
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #6e7dff, #4caf50); /* Double color gradient */
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center; /* Center everything horizontally */
+      min-height: 100vh; /* Full viewport height */
+      padding: 20px;
+      height: 100%; /* Ensures the body fills the viewport */
+    }
+
+    /* Main container Styling */
+    .container {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+      width: 100%;
+      max-width: 800px; /* Max width of the container */
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px; /* Spacing at the top */
+      margin-bottom: 40px; /* Spacing at the bottom to keep it away from footer */
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #4CAF50;
+    }
+
+    /* Upload Button */
+    #upload-image {
+      font-size: 16px;
+      padding: 12px 25px;
+      margin-bottom: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    #upload-image:hover {
+      background-color: #45a049;
+    }
+
+    /* Image Styling */
+    #image {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    /* Aspect Ratio Buttons */
+    .aspect-ratio-buttons {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .aspect-ratio-buttons button {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      margin: 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .aspect-ratio-buttons button:hover {
+      background-color: #1976D2;
+    }
+
+    /* Crop & Reset Buttons */
+    .buttons {
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      border: none;
+      padding: 15px 25px;
+      margin: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #45a049;
+    }
+
+    #reset-btn {
+      background-color: #f44336;
+    }
+
+    /* Output Section */
+    #output {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    /* Footer Styling */
+    footer {
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    footer a {
+      color: #ff4081;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Media Queries for Responsive Design */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.6em;
+      }
+
+      .btn, .aspect-ratio-buttons button {
+        font-size: 16px;
+        padding: 10px 20px;
+      }
+
+      .aspect-ratio-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #image {
+        max-width: 100%;
+        height: auto;
+      }
+
+      #upload-image {
+        padding: 10px 20px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.4em;
+      }
+
+      .btn, .aspect-ratio-buttons button {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+
+      #upload-image {
+        padding: 8px 16px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Photo Frame Cropping</h1>
+    <input type="file" id="upload-image" accept="image/*" />
+    <div>
+      <img id="image" src="" alt="Your Image" />
+    </div>
+
+    <!-- Aspect Ratio Buttons -->
+    <div class="aspect-ratio-buttons">
+      <button id="aspect-ratio-1x1" class="btn">1:1 (Square)</button>
+      <button id="aspect-ratio-4x3" class="btn">4:3 (Landscape)</button>
+      <button id="aspect-ratio-3x4" class="btn">3:4 (Portrait)</button>
+      <button id="aspect-ratio-free" class="btn">Free</button>
+    </div>
+
+    <div class="buttons">
+      <button id="crop-btn" class="btn">Crop & Download</button>
+      <button id="reset-btn" class="btn">Reset</button>
+    </div>
+
+    <div id="output"></div>
+  </div>
+
+  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+  <script>
+    let cropper;
+
+    // Handle image upload
+    document.getElementById('upload-image').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageElement = document.getElementById('image');
+          imageElement.src = event.target.result;
+          imageElement.onload = function() {
+            if (cropper) {
+              cropper.destroy();  // Destroy the existing cropper if any
+            }
+            cropper = new Cropper(imageElement, {
+              aspectRatio: 1,  // Default aspect ratio (1:1 square)
+              viewMode: 1,
+              responsive: true,
+              scalable: false,
+              zoomable: false,
+            });
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Aspect ratio buttons
+    document.getElementById('aspect-ratio-1x1').addEventListener('click', function() {
+      if (cropper) cropper.setAspectRatio(1);
+    });
+
+    document.getElementById('aspect-ratio-4x3').addEventListener('click', function() {
+      if (cropper) cropper.setAspectRatio(4 / 3);
+    });
+
+    document.getElementById('aspect-ratio-3x4').addEventListener('click', function() {
+      if (cropper) cropper.setAspectRatio(3 / 4);
+    });
+
+    document.getElementById('aspect-ratio-free').addEventListener('click', function() {
+      if (cropper) cropper.setAspectRatio(NaN); // Free cropping
+    });
+
+    // Crop and download image
+    document.getElementById('crop-btn').addEventListener('click', function() {
+      if (cropper) {
+        const canvas = cropper.getCroppedCanvas();
+        const croppedImageUrl = canvas.toDataURL('image/png');
+        downloadImage(croppedImageUrl);
+      }
+    });
+
+    // Reset button
+    document.getElementById('reset-btn').addEventListener('click', function() {
+      const imageElement = document.getElementById('image');
+      imageElement.src = '';
+      if (cropper) {
+        cropper.destroy();
+      }
+    });
+
+    // Function to download cropped image
+    function downloadImage(croppedImageUrl) {
+      const link = document.createElement('a');
+      link.href = croppedImageUrl;
+      link.download = 'cropped-image.png';
+      link.click();
+    }
+
+  </script>
+  <footer>
+    <p>Created by <a href="https://www.linkedin.com/in/prasannakumar-k-b49088291" target="_blank">Prasannakumar</a> &copy; 2024</p>
+  </footer>
+</body>
+</html>
